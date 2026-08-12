@@ -1,0 +1,35 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "dependencyDashboard": true,
+  "enabledManagers": ["composer", "github-actions"],
+  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
+  "includePaths": [
+    ".github/workflows/**",
+    "composer.json"
+  ],
+  "packageRules": [
+    {
+      "matchDepNames": ["pullfrog/pullfrog"],
+      "matchManagers": ["github-actions"],
+      "pinDigests": false
+    },
+    {
+      "enabled": false,
+      "matchDepNames": ["php"],
+      "matchManagers": ["composer"]
+    },
+    {
+      "groupName": "composer dependencies",
+      "matchManagers": ["composer"],
+      "postUpdateOptions": ["composerWithAll"],
+      "rangeStrategy": "bump"
+    },
+    {
+      "groupName": "github actions",
+      "matchManagers": ["github-actions"]
+    }
+  ],
+  "rebaseWhen": "conflicted",
+  "semanticCommits": "enabled",
+  "separateMajorMinor": false
+}

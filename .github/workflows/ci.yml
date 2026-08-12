@@ -1,0 +1,103 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Quality checks
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up PHP
+        uses: hosmelq/.github/.github/actions/php-setup@0e629f62b840abf1d0d07479e6efa99567293001
+        with:
+          php-tools: cs2pr, pie
+          php-version: '8.4'
+        env:
+          fail-fast: true
+
+      - name: Install anydoc extension
+        run: sudo env "PATH=$PATH" pie install hosmelq/ext-anydoc:0.1.3
+
+      - name: Install composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Check composer
+        run: composer normalize --dry-run
+
+      - name: Check code quality
+        run: vendor/bin/rector --ansi --dry-run
+
+      - name: Check code style
+        run: vendor/bin/pint --test
+
+      - name: Check static code
+        run: composer phpstan
+
+      - name: Check unused composer dependencies
+        run: vendor/bin/composer-dependency-analyser
+
+  tests:
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - ${{ matrix.stability }}
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.4', '8.5']
+        laravel: ['12.*', '13.*']
+        stability: [prefer-stable]
+        include:
+          - laravel: 12.*
+            testbench: 10.*
+          - laravel: 13.*
+            testbench: 11.*
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up PHP
+        uses: hosmelq/.github/.github/actions/php-setup@0e629f62b840abf1d0d07479e6efa99567293001
+        with:
+          php-tools: cs2pr, pie
+          php-version: ${{ matrix.php }}
+        env:
+          fail-fast: true
+
+      - name: Install anydoc extension
+        run: sudo env "PATH=$PATH" pie install hosmelq/ext-anydoc:0.1.3
+
+      - name: Install composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Installed dependencies
+        run: composer show -D
+
+      - name: Set up problem matchers
+        run: |
+          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+      - name: Install composer matrix dependencies
+        run: |
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+
+      - name: Run tests
+        run: composer test

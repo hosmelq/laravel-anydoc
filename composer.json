@@ -1,0 +1,102 @@
+{
+    "name": "hosmelq/laravel-anydoc",
+    "description": "Laravel integration for converting documents to GitHub-Flavored Markdown with Firecrawl anydoc.",
+    "license": "MIT",
+    "keywords": [
+        "anydoc",
+        "converter",
+        "csv",
+        "document",
+        "document-conversion",
+        "epub",
+        "excel",
+        "laravel",
+        "markdown",
+        "open-document",
+        "pdf",
+        "php",
+        "php-extension",
+        "powerpoint",
+        "rtf",
+        "word"
+    ],
+    "authors": [
+        {
+            "name": "Hosmel Quintana",
+            "email": "hosmelq@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "ext-anydoc": "^0.1.3",
+        "illuminate/filesystem": "^12.0 || ^13.0",
+        "illuminate/http": "^12.0 || ^13.0",
+        "illuminate/support": "^12.0 || ^13.0",
+        "spatie/laravel-package-tools": "^1.93",
+        "thecodingmachine/safe": "^3.4"
+    },
+    "require-dev": {
+        "ergebnis/composer-normalize": "^2.52",
+        "larastan/larastan": "^3.10",
+        "laravel/pint": "^1.30",
+        "orchestra/pest-plugin-testbench": "^4.1",
+        "orchestra/testbench": "^10.0 || ^11.1",
+        "pestphp/pest": "^4.7",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "rector/rector": "^2.6",
+        "shipmonk/composer-dependency-analyser": "^1.8",
+        "spaze/phpstan-disallowed-calls": "^4.14",
+        "thecodingmachine/phpstan-safe-rule": "^1.4",
+        "ticketswap/phpstan-error-formatter": "^1.3",
+        "tomasvotruba/type-coverage": "^2.3"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "HosmelQ\\Anydoc\\Laravel\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HosmelQ\\Anydoc\\Laravel\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "HosmelQ\\Anydoc\\Laravel\\AnydocServiceProvider"
+            ]
+        },
+        "phpstan": {
+            "includes": [
+                "extension.neon"
+            ]
+        }
+    },
+    "scripts": {
+        "phpstan": "phpstan analyse --configuration=phpstan.neon.dist --memory-limit=4G",
+        "pint": "pint",
+        "rector": "rector",
+        "test": "pest",
+        "test-coverage": "pest --coverage"
+    },
+    "scripts-descriptions": {
+        "phpstan": "Run PHPStan static analysis.",
+        "pint": "Format code using Laravel Pint.",
+        "rector": "Run Rector automated refactoring.",
+        "test": "Run the test suite using Pest.",
+        "test-coverage": "Run the test suite with code coverage using Pest."
+    },
+    "$schema": "https://getcomposer.org/schema.json"
+}

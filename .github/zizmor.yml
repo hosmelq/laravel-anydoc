@@ -1,0 +1,6 @@
+rules:
+  unpinned-uses:
+    config:
+      policies:
+        pullfrog/pullfrog: ref-pin
+        '*': hash-pin

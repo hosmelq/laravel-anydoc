@@ -1,0 +1,45 @@
+# PULLFROG ACTION — DO NOT EDIT EXCEPT WHERE INDICATED
+name: Pullfrog
+
+run-name: ${{ inputs.name || github.workflow }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        type: string
+        description: Run name
+      prompt:
+        type: string
+        description: Agent prompt
+
+permissions:
+  contents: read
+
+jobs:
+  pullfrog:
+    runs-on: ubuntu-latest
+
+    permissions:
+      checks: write
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: hosmelq/.github/.github/actions/php-setup@0e629f62b840abf1d0d07479e6efa99567293001
+        with:
+          php-tools: ''
+          php-version: '8.4'
+
+      - name: Run agent
+        uses: pullfrog/pullfrog@v0
+        with:
+          prompt: ${{ inputs.prompt }}
+          status_checks: enabled

@@ -1,0 +1,5 @@
+providers:
+  - HosmelQ\Anydoc\Laravel\AnydocServiceProvider
+
+workbench:
+  install: false
