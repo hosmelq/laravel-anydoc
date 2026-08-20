@@ -1,14 +1,14 @@
 # Laravel anydoc
 
-Convert Word, PowerPoint, Excel, OpenDocument, RTF, EPUB, CSV, and PDF files to
-GitHub-Flavored Markdown in Laravel applications. You may also access
-[anydoc's](https://github.com/firecrawl/anydoc) structured document model.
+Convert documents to GitHub-Flavored Markdown in Laravel applications, with
+access to [anydoc's](https://github.com/firecrawl/anydoc) structured document
+model when available.
 
 ## Requirements
 
-- PHP 8.4 or later
-- Laravel 12 or 13
-- ext-anydoc ^0.1.3
+- ext-anydoc ^0.2.0
+- Laravel 12+
+- PHP 8.4+
 
 ## Installation
 
@@ -16,7 +16,7 @@ Install the native [extension](https://github.com/hosmelq/ext-anydoc) with
 [PIE](https://php.github.io/pie/):
 
 ```bash
-pie install hosmelq/ext-anydoc
+pie install hosmelq/ext-anydoc:^0.2.0
 ```
 
 Install Laravel anydoc with Composer:
@@ -60,6 +60,8 @@ $bytes = file_get_contents('data.csv');
 $markdown = Anydoc::bytes($bytes, Format::Csv)->markdown();
 ```
 
+All conversions run synchronously.
+
 ## Convert files from disks
 
 Convert a file stored on a Laravel filesystem disk:
@@ -74,8 +76,7 @@ $markdown = Anydoc::disk('s3')
 
 Call `Anydoc::disk()` without a name to use Laravel's default disk.
 
-Disk files and uploaded files are read into memory before conversion. All conversions run
-synchronously.
+Disk files and uploaded files are read into memory before conversion.
 
 ## Read structured documents
 
@@ -86,12 +87,13 @@ use HosmelQ\Anydoc\Laravel\Facades\Anydoc;
 
 $document = Anydoc::file('presentation.pptx')->document();
 
+$assets = $document->assets;
 $blocks = $document->blocks;
 $notes = $document->notes;
-$assets = $document->assets;
 ```
 
-The document model includes blocks, inline content, lists, tables, notes, and embedded assets.
+The document model includes blocks, inline content, lists, tables, notes, and
+embedded assets.
 
 PDF supports Markdown conversion only. Calling `document()` for a PDF throws an
 `Anydoc\Exception\UnsupportedException`.
@@ -130,11 +132,11 @@ $fromExtension = Anydoc::formatFromExtension('.DOCX');
 $fromPath = Anydoc::formatFromPath('documents/report.docx');
 ```
 
-Each method returns a `Format` enum case or `null`. Extension detection is case-insensitive and
-accepts an optional leading dot.
+Each method returns a `Format` enum case or `null`. Extension detection is
+case-insensitive and accepts an optional leading dot.
 
-Uploaded files use their contents first and their original name as a fallback. Filesystem files
-use their contents first and their path as a fallback.
+Uploaded files use their contents first and their original name as a fallback.
+Filesystem files use their contents first and their path as a fallback.
 
 ## Use dependency injection
 
@@ -172,16 +174,18 @@ try {
 }
 ```
 
-Conversion exceptions include `EncryptedException`, `IoException`, `MalformedException`,
-`MissingPartException`, `ResourceLimitException`, and `UnsupportedException`. Filesystem sources
-may also throw Laravel filesystem exceptions when their contents cannot be read.
+Conversion exceptions include `EncryptedException`, `IoException`,
+`MalformedException`, `MissingPartException`, `ResourceLimitException`, and
+`UnsupportedException`. Filesystem sources may also throw Laravel filesystem
+exceptions when their contents cannot be read.
 
-`PanicException` represents a panic from the native Rust library and does not extend
-`ConvertException`.
+`PanicException` represents a panic from the native Rust library and does not
+extend `ConvertException`.
 
 ## Test conversions
 
-Call `Anydoc::fake()` to test application behavior without reading files or running conversions:
+Call `Anydoc::fake()` to test application behavior without reading files or
+running conversions:
 
 ```php
 use HosmelQ\Anydoc\Laravel\Facades\Anydoc;
@@ -221,14 +225,16 @@ Anydoc::assertNothingConverted();
 $conversions = Anydoc::conversions();
 ```
 
-Assertion and filtering callbacks receive a `RecordedConversion` containing its disk, format,
-input, output type, and source type. A conversion is recorded when `markdown()` or `document()` is
-called.
+Assertion and filtering callbacks receive a `RecordedConversion` containing
+its disk, format, input, output type, and source type. A conversion is recorded
+when `markdown()` or `document()` is called.
 
-The default fake Markdown response is an empty string. Document conversions require a configured
-`Anydoc\Document` response.
+The default fake Markdown response is an empty string. Document conversions
+require a configured `Anydoc\Document` response.
 
-## Running tests
+## Development
+
+Run the test suite with:
 
 ```bash
 composer test
