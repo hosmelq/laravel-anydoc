@@ -28,7 +28,7 @@
     ],
     "require": {
         "php": "^8.4",
-        "ext-anydoc": "^0.1.3",
+        "ext-anydoc": "^0.2.0",
         "illuminate/filesystem": "^12.0 || ^13.0",
         "illuminate/http": "^12.0 || ^13.0",
         "illuminate/support": "^12.0 || ^13.0",
