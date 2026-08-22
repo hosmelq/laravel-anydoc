@@ -6,7 +6,7 @@ model when available.
 
 ## Requirements
 
-- ext-anydoc ^0.2.0
+- ext-anydoc ^0.2.3
 - Laravel 12+
 - PHP 8.4+
 
@@ -16,7 +16,7 @@ Install the native [extension](https://github.com/hosmelq/ext-anydoc) with
 [PIE](https://php.github.io/pie/):
 
 ```bash
-pie install hosmelq/ext-anydoc:^0.2.0
+pie install hosmelq/ext-anydoc:^0.2.3
 ```
 
 Install Laravel anydoc with Composer:
@@ -92,8 +92,8 @@ $blocks = $document->blocks;
 $notes = $document->notes;
 ```
 
-The document model includes blocks, inline content, lists, tables, notes, and
-embedded assets.
+The document model includes blocks, checkboxes, embedded assets, inline content,
+lists, math, notes, and tables.
 
 PDF supports Markdown conversion only. Calling `document()` for a PDF throws an
 `Anydoc\Exception\UnsupportedException`.
