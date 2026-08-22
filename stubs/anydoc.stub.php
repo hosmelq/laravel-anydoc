@@ -59,6 +59,11 @@ namespace Anydoc {
 
     abstract readonly class CellSlot {}
 
+    final readonly class Checkbox extends Inline
+    {
+        public bool $checked;
+    }
+
     final readonly class CodeBlock extends Block
     {
         public ?string $lang;
@@ -143,9 +148,17 @@ namespace Anydoc {
         /** @var list<Block> */
         public array $blocks;
 
-        public ?bool $checked;
-
         public ?string $markerLabel;
+    }
+
+    final readonly class MathBlock extends Block
+    {
+        public string $text;
+    }
+
+    final readonly class MathInline extends Inline
+    {
+        public string $text;
     }
 
     final readonly class Note
