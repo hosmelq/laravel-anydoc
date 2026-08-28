@@ -6,7 +6,7 @@ model when available.
 
 ## Requirements
 
-- ext-anydoc ^0.2.3
+- ext-anydoc ^0.2.4
 - Laravel 12+
 - PHP 8.4+
 
@@ -16,7 +16,7 @@ Install the native [extension](https://github.com/hosmelq/ext-anydoc) with
 [PIE](https://php.github.io/pie/):
 
 ```bash
-pie install hosmelq/ext-anydoc:^0.2.3
+pie install hosmelq/ext-anydoc:^0.2.4
 ```
 
 Install Laravel anydoc with Composer:
@@ -175,9 +175,11 @@ try {
 ```
 
 Conversion exceptions include `EncryptedException`, `IoException`,
-`MalformedException`, `MissingPartException`, `ResourceLimitException`, and
-`UnsupportedException`. Filesystem sources may also throw Laravel filesystem
-exceptions when their contents cannot be read.
+`MalformedException`, `MissingPartException`, `NeedsOcrException`,
+`ResourceLimitException`, and `UnsupportedException`. `NeedsOcrException`
+provides the 1-indexed PDF pages requiring OCR through `$pages` and the total
+number of pages through `$pageCount`. Filesystem sources may also throw Laravel
+filesystem exceptions when their contents cannot be read.
 
 `PanicException` represents a panic from the native Rust library and does not
 extend `ConvertException`.

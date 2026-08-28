@@ -31,7 +31,7 @@ jobs:
           fail-fast: true
 
       - name: Install anydoc extension
-        run: sudo env "PATH=$PATH" pie install hosmelq/ext-anydoc:0.2.3
+        run: sudo env "PATH=$PATH" pie install hosmelq/ext-anydoc:0.2.4
 
       - name: Install composer dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
@@ -81,7 +81,7 @@ jobs:
           fail-fast: true
 
       - name: Install anydoc extension
-        run: sudo env "PATH=$PATH" pie install hosmelq/ext-anydoc:0.2.3
+        run: sudo env "PATH=$PATH" pie install hosmelq/ext-anydoc:0.2.4
 
       - name: Install composer dependencies
         run: composer install --no-interaction --no-progress --prefer-dist

@@ -254,6 +254,16 @@ namespace Anydoc\Exception {
         public string $part;
     }
 
+    final class NeedsOcrException extends ConvertException
+    {
+        public const ERROR_CODE = 'needsOcr';
+
+        public int $pageCount;
+
+        /** @var list<int> */
+        public array $pages;
+    }
+
     final class PanicException extends \Exception {}
 
     final class ResourceLimitException extends ConvertException
