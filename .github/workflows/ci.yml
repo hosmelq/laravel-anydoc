@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Set up PHP
-        uses: hosmelq/.github/.github/actions/php-setup@0e629f62b840abf1d0d07479e6efa99567293001
+        uses: hosmelq/.github/.github/actions/php-setup@5e5ccc13198e5168b27d183874b0ec86d0029071
         with:
           php-tools: cs2pr, pie
           php-version: '8.4'
@@ -73,7 +73,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Set up PHP
-        uses: hosmelq/.github/.github/actions/php-setup@0e629f62b840abf1d0d07479e6efa99567293001
+        uses: hosmelq/.github/.github/actions/php-setup@5e5ccc13198e5168b27d183874b0ec86d0029071
         with:
           php-tools: cs2pr, pie
           php-version: ${{ matrix.php }}
