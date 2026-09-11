@@ -17,6 +17,7 @@ final readonly class RecordedConversion
         public string|UploadedFile $input,
         public ConversionOutput $output,
         public ConversionSource $source,
+        public bool $ocr = false,
     ) {
     }
 }

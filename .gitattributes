@@ -1,4 +1,5 @@
 * eol=lf text=auto
+*.pdf binary
 
 .editorconfig export-ignore
 .gitattributes export-ignore
