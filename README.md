@@ -62,6 +62,36 @@ $markdown = Anydoc::bytes($bytes, Format::Csv)->markdown();
 
 All conversions run synchronously.
 
+## Use OCR for scanned PDFs
+
+Pass `ocr: true` to enable OCR for a Markdown conversion:
+
+```php
+use HosmelQ\Anydoc\Laravel\Facades\Anydoc;
+
+$markdown = Anydoc::file('scan.pdf')->markdown(ocr: true);
+```
+
+The same option works with bytes, uploaded files, and filesystem disks.
+
+Conversion runs locally first. If the PDF requires OCR, the entire file is sent
+to Firecrawl Parse, including pages that already contain text. OCR is disabled
+by default. Without it, scanned PDFs throw a `NeedsOcrException`.
+
+Set `FIRECRAWL_API_KEY` in your application's `.env` for higher limits. The API
+key is optional.
+
+Set `FIRECRAWL_API_URL` to use another Firecrawl Parse deployment. The default
+is `https://api.firecrawl.dev`. The package appends `/v2/parse` to this URL.
+
+Publish `config/anydoc.php` to configure the API key, URL, and request timeout:
+
+```bash
+php artisan vendor:publish --tag="anydoc-config"
+```
+
+The default request timeout is 300 seconds.
+
 ## Convert files from disks
 
 Convert a file stored on a Laravel filesystem disk:
@@ -184,6 +214,10 @@ filesystem exceptions when their contents cannot be read.
 `PanicException` represents a panic from the native Rust library and does not
 extend `ConvertException`.
 
+OCR network failures, rejected requests, and invalid responses throw
+`HosmelQ\Anydoc\Laravel\Exceptions\HostedOcrException`. It extends
+`RuntimeException` and must be caught separately from `ConvertException`.
+
 ## Test conversions
 
 Call `Anydoc::fake()` to test application behavior without reading files or
@@ -228,8 +262,18 @@ $conversions = Anydoc::conversions();
 ```
 
 Assertion and filtering callbacks receive a `RecordedConversion` containing
-its disk, format, input, output type, and source type. A conversion is recorded
-when `markdown()` or `document()` is called.
+its disk, format, input, output type, source type, and `ocr` option. A
+conversion is recorded when `markdown()` or `document()` is called.
+
+Use the recorded `ocr` option to check whether OCR was requested:
+
+```php
+Anydoc::file('scan.pdf')->markdown(ocr: true);
+
+Anydoc::assertConvertedToMarkdown(
+    fn (RecordedConversion $conversion): bool => $conversion->ocr,
+);
+```
 
 The default fake Markdown response is an empty string. Document conversions
 require a configured `Anydoc\Document` response.

@@ -10,5 +10,5 @@ abstract readonly class PendingConversion
 {
     abstract public function document(): Document;
 
-    abstract public function markdown(): string;
+    abstract public function markdown(bool $ocr = false): string;
 }

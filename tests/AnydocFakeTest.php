@@ -122,6 +122,18 @@ it('records conversions only when an output is requested', function (): void {
     );
 });
 
+it('records OCR opt-in', function (): void {
+    Anydoc::fake();
+
+    $conversion = Anydoc::file('/missing/scanned.pdf');
+
+    $conversion->markdown(ocr: true);
+    $conversion->markdown();
+
+    Anydoc::assertConvertedTimes(1, fn (RecordedConversion $conversion): bool => $conversion->ocr);
+    Anydoc::assertConvertedTimes(1, fn (RecordedConversion $conversion): bool => ! $conversion->ocr);
+});
+
 it('returns an explicitly configured document', function (): void {
     $document = anydoc_to_document("name,role\nAda,Engineer\n", 'csv');
     $fake = Anydoc::fake([
