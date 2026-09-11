@@ -42,7 +42,7 @@ final readonly class AnydocManager implements Anydoc
         $format = $this->formatFromBytes($bytes)
             ?? $this->formatFromPath($file->getClientOriginalName());
 
-        return $this->bytes($bytes, $format);
+        return new PendingBytesConversion($bytes, $format, $file->getClientOriginalName());
     }
 
     public function formatFromBytes(string $bytes): null|Format

@@ -16,7 +16,7 @@ final readonly class FilesystemPendingDisk extends PendingDisk
     ) {
     }
 
-    public function file(string $path): PendingConversion
+    public function file(string $path): PendingBytesConversion
     {
         $bytes = $this->filesystem->get($path);
 
@@ -27,6 +27,6 @@ final readonly class FilesystemPendingDisk extends PendingDisk
         $format = $this->anydoc->formatFromBytes($bytes)
             ?? $this->anydoc->formatFromPath($path);
 
-        return $this->anydoc->bytes($bytes, $format);
+        return new PendingBytesConversion($bytes, $format, basename($path));
     }
 }

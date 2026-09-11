@@ -33,8 +33,13 @@ final readonly class PendingFileConversion extends PendingConversion
         return anydoc_to_document($bytes, $format);
     }
 
-    public function markdown(): string
+    public function markdown(bool $ocr = false): string
     {
-        return anydoc_to_markdown($this->path);
+        return $this->markdownWithOcrFallback(
+            fn (): string => anydoc_to_markdown($this->path),
+            $ocr,
+            fn (): string => file_get_contents($this->path),
+            basename($this->path),
+        );
     }
 }
