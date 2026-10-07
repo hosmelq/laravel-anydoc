@@ -7,8 +7,10 @@ namespace HosmelQ\Anydoc\Laravel;
 use function Safe\file_get_contents;
 
 use Anydoc\Document;
+use Anydoc\Exception\NeedsOcrException;
 use ErrorException;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Support\Facades\App;
 
 final readonly class PendingFileConversion extends PendingConversion
 {
@@ -33,8 +35,16 @@ final readonly class PendingFileConversion extends PendingConversion
         return anydoc_to_document($bytes, $format);
     }
 
-    public function markdown(): string
+    public function markdown(bool $ocr = false): string
     {
-        return anydoc_to_markdown($this->path);
+        try {
+            return anydoc_to_markdown($this->path);
+        } catch (NeedsOcrException $needsOcrException) {
+            if (! $ocr) {
+                throw $needsOcrException;
+            }
+
+            return App::make(HostedOcr::class)->convert(file_get_contents($this->path), basename($this->path));
+        }
     }
 }

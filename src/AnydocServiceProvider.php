@@ -12,7 +12,7 @@ class AnydocServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        $package->name('anydoc');
+        $package->name('anydoc')->hasConfigFile();
     }
 
     public function packageRegistered(): void
