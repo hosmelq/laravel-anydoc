@@ -1,0 +1,28 @@
+name: /dev/null
+
+on:
+  release:
+    types: [published]
+
+permissions: {}
+
+jobs:
+  commit:
+    name: Commit release
+
+    environment: devnull
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Commit to /dev/null
+        uses: nunomaduro/dev-null.sh/.github/actions/commit@2bd0d830f369e2f5b575e5d69ee7b215753e3864 # production
+        with:
+          body: |
+            ${{ github.event.repository.name }} ${{ github.event.release.tag_name }} is out.
+
+            ${{ github.event.release.body }}
+
+            Convert PDFs, Office files, and more to Markdown from Laravel.
+            ${{ github.event.release.html_url }}
+          ssh-key: ${{ secrets.DEVNULL_SSH_KEY }}
