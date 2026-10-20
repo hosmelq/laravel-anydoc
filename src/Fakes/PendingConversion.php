@@ -32,13 +32,14 @@ final readonly class PendingConversion extends BasePendingConversion
         );
     }
 
-    public function markdown(): string
+    public function markdown(bool $ocr = false): string
     {
         return $this->fake->convertToMarkdown(
             $this->source,
             $this->input,
             $this->disk,
             $this->format,
+            $ocr,
         );
     }
 }

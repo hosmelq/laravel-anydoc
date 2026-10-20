@@ -190,8 +190,9 @@ final class AnydocFake implements Anydoc
         string|UploadedFile $input,
         null|string $disk,
         null|Format $format,
+        bool $ocr = false,
     ): string {
-        $conversion = $this->record($source, $input, ConversionOutput::Markdown, $disk, $format);
+        $conversion = $this->record($source, $input, ConversionOutput::Markdown, $disk, $format, $ocr);
         $response = $this->markdownResponse;
 
         return $response instanceof Closure ? $response($conversion) : $response;
@@ -254,6 +255,7 @@ final class AnydocFake implements Anydoc
         ConversionOutput $output,
         null|string $disk,
         null|Format $format,
+        bool $ocr = false,
     ): RecordedConversion {
         $conversion = new RecordedConversion(
             disk: $disk,
@@ -261,6 +263,7 @@ final class AnydocFake implements Anydoc
             input: $input,
             output: $output,
             source: $source,
+            ocr: $ocr,
         );
 
         $this->conversions[] = $conversion;
