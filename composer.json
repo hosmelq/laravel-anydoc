@@ -26,6 +26,10 @@
             "email": "hosmelq@gmail.com"
         }
     ],
+    "homepage": "https://github.com/hosmelq/laravel-anydoc",
+    "support": {
+        "docs": "https://github.com/hosmelq/laravel-anydoc#readme"
+    },
     "require": {
         "php": "^8.4",
         "ext-anydoc": "^0.2.4",
