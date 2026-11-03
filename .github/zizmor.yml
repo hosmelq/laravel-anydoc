@@ -1,4 +1,7 @@
 rules:
+  ref-version-mismatch:
+    ignore:
+      - devnull.yml
   unpinned-uses:
     config:
       policies:
