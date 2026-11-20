@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+- Require Laravel 13 and ext-anydoc 1.0, which supports PHP 8.6.
+
 ## v1.4.0 - 2026-10-19
 
 - Add opt-in hosted OCR for scanned PDFs with `markdown(ocr: true)`.

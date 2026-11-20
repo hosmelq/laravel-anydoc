@@ -15,6 +15,7 @@ use HosmelQ\Anydoc\Laravel\RecordedConversion;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;
+use Override;
 
 /**
  * @method static void assertConverted(null|Closure $callback = null)
@@ -46,6 +47,7 @@ final class Anydoc extends Facade
         });
     }
 
+    #[Override]
     protected static function getFacadeAccessor(): string
     {
         return AnydocContract::class;

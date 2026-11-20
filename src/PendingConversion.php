@@ -19,8 +19,12 @@ abstract readonly class PendingConversion
      * @param Closure(): string $convert
      * @param Closure(): string $bytes
      */
-    protected function markdownWithOcrFallback(Closure $convert, bool $ocr, Closure $bytes, string $filename): string
-    {
+    protected function markdownWithOcrFallback(
+        Closure $convert,
+        bool $ocr,
+        Closure $bytes,
+        string $filename,
+    ): string {
         try {
             return $convert();
         } catch (NeedsOcrException $needsOcrException) {

@@ -14,8 +14,7 @@ use PHPUnit\Framework\AssertionFailedError;
 it('fails assertions when expected conversions are missing', function (): void {
     Anydoc::fake();
 
-    expect(fn () => Anydoc::assertConverted())
-        ->toThrow(AssertionFailedError::class);
+    expect(fn () => Anydoc::assertConverted())->toThrow(AssertionFailedError::class);
 });
 
 it('rejects invalid document callback responses', function (): void {
@@ -24,14 +23,20 @@ it('rejects invalid document callback responses', function (): void {
     ]);
 
     expect(fn () => Anydoc::bytes('bytes', Format::Csv)->document())
-        ->toThrow(InvalidArgumentException::class, 'The document fake response callback must return an Anydoc\\Document.');
+        ->toThrow(
+            InvalidArgumentException::class,
+            'The document fake response callback must return an Anydoc\\Document.',
+        );
 });
 
 it('rejects invalid document fake responses', function (): void {
     expect(fn (): AnydocFake => Anydoc::fake([
         'document' => 'not a document',
     ]))
-        ->toThrow(InvalidArgumentException::class, 'The document fake response must be an Anydoc\\Document or Closure.');
+        ->toThrow(
+            InvalidArgumentException::class,
+            'The document fake response must be an Anydoc\\Document or Closure.',
+        );
 });
 
 it('rejects invalid markdown callback responses', function (): void {
@@ -40,21 +45,26 @@ it('rejects invalid markdown callback responses', function (): void {
     ]);
 
     expect(fn () => Anydoc::bytes('bytes')->markdown())
-        ->toThrow(InvalidArgumentException::class, 'The markdown fake response callback must return a string.');
+        ->toThrow(
+            InvalidArgumentException::class,
+            'The markdown fake response callback must return a string.',
+        );
 });
 
 it('rejects invalid markdown fake responses', function (): void {
     expect(fn (): AnydocFake => Anydoc::fake([
         'markdown' => 42,
     ]))
-        ->toThrow(InvalidArgumentException::class, 'The markdown fake response must be a string or Closure.');
+        ->toThrow(
+            InvalidArgumentException::class,
+            'The markdown fake response must be a string or Closure.',
+        );
 });
 
 it('rejects unsupported fake responses', function (): void {
     expect(fn (): AnydocFake => Anydoc::fake([
         'pdf' => 'not supported',
-    ]))
-        ->toThrow(InvalidArgumentException::class, 'Unsupported fake response [pdf].');
+    ]))->toThrow(InvalidArgumentException::class, 'Unsupported fake response [pdf].');
 });
 
 it('requires an explicit document response', function (): void {
@@ -67,13 +77,11 @@ it('requires an explicit document response', function (): void {
 it('keeps native format detection available', function (): void {
     Anydoc::fake();
 
-    expect(Anydoc::formatFromExtension('.xlsm'))
-        ->toBe(Format::Xlsx);
+    expect(Anydoc::formatFromExtension('.xlsm'))->toBe(Format::Xlsx);
 });
 
 it('records bytes, files, uploads, and disk paths', function (): void {
     $fake = Anydoc::fake();
-
     $upload = UploadedFile::fake()->createWithContent('report.csv', 'name');
 
     Anydoc::bytes('bytes', Format::Csv)->markdown();
@@ -111,8 +119,7 @@ it('records conversions only when an output is requested', function (): void {
 
     Anydoc::assertNothingConverted();
 
-    expect($conversion->markdown())
-        ->toBe('# Fake document');
+    expect($conversion->markdown())->toBe('# Fake document');
 
     Anydoc::assertConverted();
     Anydoc::assertConvertedTimes();
@@ -131,7 +138,10 @@ it('records OCR opt-in', function (): void {
     $conversion->markdown();
 
     Anydoc::assertConvertedTimes(1, fn (RecordedConversion $conversion): bool => $conversion->ocr);
-    Anydoc::assertConvertedTimes(1, fn (RecordedConversion $conversion): bool => ! $conversion->ocr);
+    Anydoc::assertConvertedTimes(
+        1,
+        fn (RecordedConversion $conversion): bool => ! $conversion->ocr,
+    );
 });
 
 it('returns an explicitly configured document', function (): void {
@@ -140,21 +150,21 @@ it('returns an explicitly configured document', function (): void {
         'document' => $document,
     ]);
 
-    expect(Anydoc::bytes('ignored', Format::Csv)->document())
-        ->toBe($document);
+    expect(Anydoc::bytes('ignored', Format::Csv)->document())->toBe($document);
 
     $fake->assertConvertedToDocument(
-        fn (RecordedConversion $conversion): bool => $conversion->source === ConversionSource::Bytes,
+        fn (RecordedConversion $conversion): bool
+            => $conversion->source === ConversionSource::Bytes,
     );
 });
 
 it('supports response callbacks', function (): void {
     Anydoc::fake([
-        'markdown' => fn (RecordedConversion $conversion): string => '# '.$conversion->source->value,
+        'markdown' => fn (RecordedConversion $conversion): string
+            => '# '.$conversion->source->value,
     ]);
 
-    expect(Anydoc::bytes('bytes')->markdown())
-        ->toBe('# bytes');
+    expect(Anydoc::bytes('bytes')->markdown())->toBe('# bytes');
 });
 
 it('swaps the facade for a fake', function (): void {

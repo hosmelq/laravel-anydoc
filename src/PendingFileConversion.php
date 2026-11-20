@@ -9,13 +9,13 @@ use function Safe\file_get_contents;
 use Anydoc\Document;
 use ErrorException;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Override;
 
 final readonly class PendingFileConversion extends PendingConversion
 {
-    public function __construct(private string $path)
-    {
-    }
+    public function __construct(private string $path) {}
 
+    #[Override]
     public function document(): Document
     {
         try {
@@ -33,6 +33,7 @@ final readonly class PendingFileConversion extends PendingConversion
         return anydoc_to_document($bytes, $format);
     }
 
+    #[Override]
     public function markdown(bool $ocr = false): string
     {
         return $this->markdownWithOcrFallback(

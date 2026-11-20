@@ -1,14 +1,18 @@
 * eol=lf text=auto
-*.pdf binary
 
-.editorconfig export-ignore
-.gitattributes export-ignore
-.github export-ignore
-.gitignore export-ignore
-composer-dependency-analyser.php export-ignore
-phpstan.neon.dist export-ignore
-phpunit.xml.dist export-ignore
-pint.json export-ignore
-rector.php export-ignore
-testbench.yaml export-ignore
-tests export-ignore
+*.md diff=markdown
+*.pdf binary
+*.php diff=php
+
+/.editorconfig export-ignore
+/.gitattributes export-ignore
+/.github export-ignore
+/.gitignore export-ignore
+/CHANGELOG.md export-ignore
+/composer-dependency-analyser.php export-ignore
+/ecs.php export-ignore
+/phpstan.neon.dist export-ignore
+/phpunit.xml.dist export-ignore
+/rector.php export-ignore
+/testbench.yaml export-ignore
+/tests export-ignore

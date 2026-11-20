@@ -12,13 +12,18 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 it('preserves native conversion exceptions', function (): void {
-    expect(fn (): string => new AnydocManager(app(Factory::class))->bytes('not a document')->markdown())
-        ->toThrow(UnsupportedException::class);
+    expect(
+        fn (): string
+            => new AnydocManager(app(Factory::class))->bytes('not a document')->markdown(),
+    )->toThrow(UnsupportedException::class);
 });
 
 it('reports unreadable local files with the Laravel filesystem exception', function (): void {
-    expect(fn (): Document => new AnydocManager(app(Factory::class))->file(__DIR__.'/Fixtures/missing.csv')->document())
-        ->toThrow(FileNotFoundException::class);
+    expect(
+        fn (): Document
+            => new AnydocManager(app(Factory::class))->file(__DIR__.'/Fixtures/missing.csv')
+                ->document(),
+    )->toThrow(FileNotFoundException::class);
 });
 
 it('converts bytes to markdown and the document model', function (): void {
@@ -36,8 +41,9 @@ it('converts files from Laravel disks', function (): void {
 
     Storage::disk('documents')->put('people.csv', "name,role\nAda,Engineer\n");
 
-    expect(new AnydocManager(app(Factory::class))->disk('documents')->file('people.csv')->markdown())
-        ->toContain('| name | role |');
+    expect(
+        new AnydocManager(app(Factory::class))->disk('documents')->file('people.csv')->markdown(),
+    )->toContain('| name | role |');
 });
 
 it('converts local files with extension fallback', function (): void {
@@ -72,9 +78,11 @@ it('exposes all native format detection operations', function (): void {
         ->toBeNull();
 });
 
-it('maps every native format to the Laravel enum', function (string $extension, Format $format): void {
-    expect(new AnydocManager(app(Factory::class))->formatFromExtension($extension))
-        ->toBe($format);
+it('maps every native format to the Laravel enum', function (
+    string $extension,
+    Format $format,
+): void {
+    expect(new AnydocManager(app(Factory::class))->formatFromExtension($extension))->toBe($format);
 })->with([
     'CSV' => ['csv', Format::Csv],
     'EPUB' => ['epub', Format::Epub],

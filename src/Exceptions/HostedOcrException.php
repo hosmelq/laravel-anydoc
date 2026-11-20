@@ -11,7 +11,11 @@ final class HostedOcrException extends RuntimeException
 {
     public static function connectionFailed(ConnectionException $connectionException): self
     {
-        return new self('Firecrawl Parse: '.$connectionException->getMessage(), 0, $connectionException);
+        return new self(
+            'Firecrawl Parse: '.$connectionException->getMessage(),
+            0,
+            $connectionException,
+        );
     }
 
     public static function invalidApiKey(string $detail): self
@@ -21,7 +25,10 @@ final class HostedOcrException extends RuntimeException
 
     public static function keylessLimitReached(string $detail): self
     {
-        return new self('Firecrawl Parse keyless limit reached, set ANYDOC_FIRECRAWL_API_KEY: '.$detail, 429);
+        return new self(
+            'Firecrawl Parse keyless limit reached, set ANYDOC_FIRECRAWL_API_KEY: '.$detail,
+            429,
+        );
     }
 
     public static function missingMarkdown(): self

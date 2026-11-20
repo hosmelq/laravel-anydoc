@@ -6,6 +6,7 @@ namespace HosmelQ\Anydoc\Laravel;
 
 use Anydoc\Document;
 use HosmelQ\Anydoc\Laravel\Enums\Format;
+use Override;
 
 final readonly class PendingBytesConversion extends PendingConversion
 {
@@ -13,14 +14,15 @@ final readonly class PendingBytesConversion extends PendingConversion
         private string $bytes,
         private null|Format $format,
         private string $filename = 'document.pdf',
-    ) {
-    }
+    ) {}
 
+    #[Override]
     public function document(): Document
     {
         return anydoc_to_document($this->bytes, $this->format?->value);
     }
 
+    #[Override]
     public function markdown(bool $ocr = false): string
     {
         return $this->markdownWithOcrFallback(

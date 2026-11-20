@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: Continuous integration
 
 on:
   push:
@@ -21,17 +21,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Set up PHP
-        uses: hosmelq/.github/.github/actions/php-setup@5e5ccc13198e5168b27d183874b0ec86d0029071
+        uses: hosmelq/.github/.github/actions/php-setup@32f4a95b53649f1634b195193a61bb56a6b26d50 # main
         with:
-          php-tools: cs2pr, pie
+          php-tools: cs2pr
           php-version: '8.4'
+          pie-extensions: hosmelq/ext-anydoc:^1.0.0
         env:
           fail-fast: true
-
-      - name: Install anydoc extension
-        run: sudo env "PATH=$PATH" pie install hosmelq/ext-anydoc:0.2.4
 
       - name: Install composer dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
@@ -43,7 +43,7 @@ jobs:
         run: vendor/bin/rector --ansi --dry-run
 
       - name: Check code style
-        run: vendor/bin/pint --test
+        run: vendor/bin/ecs check
 
       - name: Check static code
         run: composer phpstan
@@ -52,39 +52,38 @@ jobs:
         run: vendor/bin/composer-dependency-analyser
 
   tests:
-    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - ${{ matrix.stability }}
+    name: PHP ${{ matrix.php }} (${{ matrix.dependencies }})
 
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.4', '8.5']
-        laravel: ['12.*', '13.*']
-        stability: [prefer-stable]
+        dependencies: [prefer-stable]
         include:
-          - laravel: 12.*
-            testbench: 10.*
-          - laravel: 13.*
-            testbench: 11.*
+          - dependencies: prefer-lowest
+            php: '8.4'
+        php: ['8.4', '8.5', '8.6']
 
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Set up PHP
-        uses: hosmelq/.github/.github/actions/php-setup@5e5ccc13198e5168b27d183874b0ec86d0029071
+        uses: hosmelq/.github/.github/actions/php-setup@32f4a95b53649f1634b195193a61bb56a6b26d50 # main
         with:
-          php-tools: cs2pr, pie
+          php-tools: cs2pr
           php-version: ${{ matrix.php }}
+          pie-extensions: ${{ matrix.dependencies == 'prefer-lowest' && 'hosmelq/ext-anydoc:1.0.0' || 'hosmelq/ext-anydoc:^1.0.0' }}
         env:
           fail-fast: true
 
-      - name: Install anydoc extension
-        run: sudo env "PATH=$PATH" pie install hosmelq/ext-anydoc:0.2.4
-
       - name: Install composer dependencies
-        run: composer install --no-interaction --no-progress --prefer-dist
+        env:
+          DEPENDENCIES: ${{ matrix.dependencies }}
+        run: composer update --no-interaction --no-progress --prefer-dist --prefer-stable --"$DEPENDENCIES"
 
       - name: Installed dependencies
         run: composer show -D
@@ -93,11 +92,6 @@ jobs:
         run: |
           echo "::add-matcher::${{ runner.tool_cache }}/php.json"
           echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
-
-      - name: Install composer matrix dependencies
-        run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Run tests
         run: composer test

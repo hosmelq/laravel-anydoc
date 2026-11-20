@@ -16,6 +16,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use LogicException;
+use Override;
 use PHPUnit\Framework\Assert as PHPUnit;
 
 final class AnydocFake implements Anydoc
@@ -52,11 +53,15 @@ final class AnydocFake implements Anydoc
 
             if ($conversionOutput === ConversionOutput::Document) {
                 if ($response instanceof Closure) {
-                    $documentResponse = static function (RecordedConversion $conversion) use ($response): Document {
+                    $documentResponse = static function (RecordedConversion $conversion) use (
+                        $response,
+                    ): Document {
                         $document = $response($conversion);
 
                         if (! $document instanceof Document) {
-                            throw new InvalidArgumentException('The document fake response callback must return an Anydoc\\Document.');
+                            throw new InvalidArgumentException(
+                                'The document fake response callback must return an Anydoc\\Document.',
+                            );
                         }
 
                         return $document;
@@ -66,7 +71,9 @@ final class AnydocFake implements Anydoc
                 }
 
                 if (! $response instanceof Document) {
-                    throw new InvalidArgumentException('The document fake response must be an Anydoc\\Document or Closure.');
+                    throw new InvalidArgumentException(
+                        'The document fake response must be an Anydoc\\Document or Closure.',
+                    );
                 }
 
                 $documentResponse = $response;
@@ -75,11 +82,15 @@ final class AnydocFake implements Anydoc
             }
 
             if ($response instanceof Closure) {
-                $markdownResponse = static function (RecordedConversion $conversion) use ($response): string {
+                $markdownResponse = static function (RecordedConversion $conversion) use (
+                    $response,
+                ): string {
                     $markdown = $response($conversion);
 
                     if (! is_string($markdown)) {
-                        throw new InvalidArgumentException('The markdown fake response callback must return a string.');
+                        throw new InvalidArgumentException(
+                            'The markdown fake response callback must return a string.',
+                        );
                     }
 
                     return $markdown;
@@ -89,7 +100,9 @@ final class AnydocFake implements Anydoc
             }
 
             if (! is_string($response)) {
-                throw new InvalidArgumentException('The markdown fake response must be a string or Closure.');
+                throw new InvalidArgumentException(
+                    'The markdown fake response must be a string or Closure.',
+                );
             }
 
             $markdownResponse = $response;
@@ -148,6 +161,7 @@ final class AnydocFake implements Anydoc
         );
     }
 
+    #[Override]
     public function bytes(string $bytes, null|Format $format = null): FakePendingConversion
     {
         return $this->pending(ConversionSource::Bytes, $bytes, format: $format);
@@ -176,7 +190,9 @@ final class AnydocFake implements Anydoc
         null|Format $format,
     ): Document {
         if ($this->documentResponse === null) {
-            throw new LogicException('No document response was configured. Pass a document response to Anydoc::fake() before document().');
+            throw new LogicException(
+                'No document response was configured. Pass a document response to Anydoc::fake() before document().',
+            );
         }
 
         $conversion = $this->record($source, $input, ConversionOutput::Document, $disk, $format);
@@ -192,17 +208,26 @@ final class AnydocFake implements Anydoc
         null|Format $format,
         bool $ocr = false,
     ): string {
-        $conversion = $this->record($source, $input, ConversionOutput::Markdown, $disk, $format, $ocr);
+        $conversion = $this->record(
+            $source,
+            $input,
+            ConversionOutput::Markdown,
+            $disk,
+            $format,
+            $ocr,
+        );
         $response = $this->markdownResponse;
 
         return $response instanceof Closure ? $response($conversion) : $response;
     }
 
+    #[Override]
     public function disk(null|string $name = null): FakePendingDisk
     {
         return new FakePendingDisk($this, $name);
     }
 
+    #[Override]
     public function file(string|UploadedFile $file): FakePendingConversion
     {
         $source = is_string($file) ? ConversionSource::File : ConversionSource::Upload;
@@ -210,6 +235,7 @@ final class AnydocFake implements Anydoc
         return $this->pending($source, $file);
     }
 
+    #[Override]
     public function formatFromBytes(string $bytes): null|Format
     {
         $format = anydoc_format_from_bytes($bytes);
@@ -217,6 +243,7 @@ final class AnydocFake implements Anydoc
         return $format === null ? null : Format::from($format);
     }
 
+    #[Override]
     public function formatFromExtension(string $extension): null|Format
     {
         $format = anydoc_format_from_extension($extension);
@@ -224,6 +251,7 @@ final class AnydocFake implements Anydoc
         return $format === null ? null : Format::from($format);
     }
 
+    #[Override]
     public function formatFromPath(string $path): null|Format
     {
         $format = anydoc_format_from_path($path);
@@ -265,7 +293,6 @@ final class AnydocFake implements Anydoc
             source: $source,
             ocr: $ocr,
         );
-
         $this->conversions[] = $conversion;
 
         return $conversion;

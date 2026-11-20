@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Commit to /dev/null
-        uses: nunomaduro/dev-null.sh/.github/actions/commit@2bd0d830f369e2f5b575e5d69ee7b215753e3864 # production
+        uses: nunomaduro/dev-null.sh/.github/actions/commit@2ef29e77d360b7e53ce5de1376d002ae1a7e5727 # production
         with:
           body: |
             ${{ github.event.repository.name }} ${{ github.event.release.tag_name }} is out.
@@ -24,5 +24,6 @@ jobs:
             ${{ github.event.release.body }}
 
             Convert PDFs, Office files, and more to Markdown from Laravel.
+
             ${{ github.event.release.html_url }}
           ssh-key: ${{ secrets.DEVNULL_SSH_KEY }}

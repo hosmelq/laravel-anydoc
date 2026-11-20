@@ -1,12 +1,25 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "dependencyDashboard": true,
-  "enabledManagers": ["composer", "github-actions"],
-  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
-  "includePaths": [
-    ".github/workflows/**",
-    "composer.json"
+  "customManagers": [
+    {
+      "customType": "regex",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "zizmorcore/zizmor",
+      "extractVersionTemplate": "^v(?<version>.+)$",
+      "managerFilePatterns": [".github/workflows/zizmor.yml"],
+      "matchStrings": ["version: (?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)"]
+    }
   ],
+  "dependencyDashboard": true,
+  "enabledManagers": ["composer", "custom.regex", "github-actions"],
+  "extends": [
+    "config:recommended",
+    "group:all",
+    "helpers:pinGitHubActionDigests",
+    "schedule:weekly"
+  ],
+  "includePaths": [".github/workflows/**", "composer.json"],
+  "minimumReleaseAge": "1 day",
   "packageRules": [
     {
       "matchDepNames": ["pullfrog/pullfrog"],
@@ -19,17 +32,13 @@
       "matchManagers": ["composer"]
     },
     {
-      "groupName": "composer dependencies",
       "matchManagers": ["composer"],
       "postUpdateOptions": ["composerWithAll"],
       "rangeStrategy": "bump"
-    },
-    {
-      "groupName": "github actions",
-      "matchManagers": ["github-actions"]
     }
   ],
   "rebaseWhen": "conflicted",
   "semanticCommits": "enabled",
-  "separateMajorMinor": false
+  "timezone": "America/Managua",
+  "updateNotScheduled": false
 }

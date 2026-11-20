@@ -10,6 +10,7 @@ use HosmelQ\Anydoc\Laravel\Enums\ConversionSource;
 use HosmelQ\Anydoc\Laravel\Enums\Format;
 use HosmelQ\Anydoc\Laravel\PendingConversion as BasePendingConversion;
 use Illuminate\Http\UploadedFile;
+use Override;
 
 final readonly class PendingConversion extends BasePendingConversion
 {
@@ -19,9 +20,9 @@ final readonly class PendingConversion extends BasePendingConversion
         private ConversionSource $source,
         private null|string $disk = null,
         private null|Format $format = null,
-    ) {
-    }
+    ) {}
 
+    #[Override]
     public function document(): Document
     {
         return $this->fake->convertToDocument(
@@ -32,6 +33,7 @@ final readonly class PendingConversion extends BasePendingConversion
         );
     }
 
+    #[Override]
     public function markdown(bool $ocr = false): string
     {
         return $this->fake->convertToMarkdown(

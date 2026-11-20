@@ -19,10 +19,12 @@ final class HostedOcr
     {
         $apiKey = Config::string('anydoc.ocr.api_key');
         $apiUrl = Config::string('anydoc.ocr.api_url');
-
         $request = Http::acceptJson()
             ->timeout(Config::integer('anydoc.ocr.timeout'))
-            ->when($apiKey !== '', fn (PendingRequest $request): PendingRequest => $request->withToken($apiKey))
+            ->when(
+                $apiKey !== '',
+                fn (PendingRequest $request): PendingRequest => $request->withToken($apiKey),
+            )
             ->attach('file', $bytes, $filename, ['Content-Type' => 'application/pdf']);
 
         try {

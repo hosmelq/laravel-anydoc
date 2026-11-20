@@ -25,14 +25,24 @@ it('does not send other native conversion failures to OCR', function (): void {
 it('preserves the cause of hosted connection failures', function (): void {
     Http::fake(['*' => Http::failedConnection('Connection timed out')]);
 
-    expect(fn (): string => Anydoc::bytes(file_get_contents(__DIR__.'/Fixtures/scanned.pdf'))->markdown(ocr: true))
+    expect(
+        fn (): string
+            => Anydoc::bytes(file_get_contents(__DIR__.'/Fixtures/scanned.pdf'))
+                ->markdown(ocr: true),
+    )
         ->toThrow(function (HostedOcrException $hostedOcrException): void {
             expect($hostedOcrException->getPrevious())->toBeInstanceOf(ConnectionException::class)
                 ->and($hostedOcrException->getMessage())->toContain('Connection timed out');
         });
 });
 
-it('reports hosted conversion failures', function (array|string $body, int $status, string $apiKey, string $message, int $code): void {
+it('reports hosted conversion failures', function (
+    array|string $body,
+    int $status,
+    string $apiKey,
+    string $message,
+    int $code,
+): void {
     Config::set('anydoc.ocr.api_key', $apiKey);
     Http::fake(['*' => Http::response($body, $status)]);
 
@@ -43,30 +53,63 @@ it('reports hosted conversion failures', function (array|string $body, int $stat
         });
 })->with([
     'http error' => ['<html>Server error</html>', 500, '', 'HTTP 500', 500],
-    'invalid api key' => [['success' => false, 'error' => 'Unauthorized'], 401, 'test-key', 'rejected the API key: Unauthorized', 401],
-    'keyless limit' => [['success' => false, 'error' => 'Too many requests'], 429, '', 'set ANYDOC_FIRECRAWL_API_KEY', 429],
+    'invalid api key' => [
+        ['success' => false, 'error' => 'Unauthorized'],
+        401,
+        'test-key',
+        'rejected the API key: Unauthorized',
+        401,
+    ],
+    'keyless limit' => [
+        ['success' => false, 'error' => 'Too many requests'],
+        429,
+        '',
+        'set ANYDOC_FIRECRAWL_API_KEY',
+        429,
+    ],
     'missing markdown' => [['success' => true], 200, '', 'returned no Markdown', 0],
-    'out of credits' => [['success' => false, 'error' => 'Payment required'], 402, 'test-key', 'out of credits: Payment required', 402],
-    'rate limit' => [['success' => false, 'error' => 'Too many requests'], 429, 'test-key', 'rate limit reached: Too many requests', 429],
-    'rejected conversion' => [['success' => false, 'error' => 'Cannot parse'], 200, '', 'rejected the document: Cannot parse', 0],
+    'out of credits' => [
+        ['success' => false, 'error' => 'Payment required'],
+        402,
+        'test-key',
+        'out of credits: Payment required',
+        402,
+    ],
+    'rate limit' => [
+        ['success' => false, 'error' => 'Too many requests'],
+        429,
+        'test-key',
+        'rate limit reached: Too many requests',
+        429,
+    ],
+    'rejected conversion' => [
+        ['success' => false, 'error' => 'Cannot parse'],
+        200,
+        '',
+        'rejected the document: Cannot parse',
+        0,
+    ],
 ]);
 
 it('requires OCR opt-in for scanned PDFs', function (PendingConversion $conversion): void {
     expect(fn (): string => $conversion->markdown())->toThrow(NeedsOcrException::class);
 })->with([
-    'bytes' => fn (): PendingConversion => Anydoc::bytes(file_get_contents(__DIR__.'/Fixtures/scanned.pdf')),
+    'bytes' => fn (): PendingConversion
+        => Anydoc::bytes(file_get_contents(__DIR__.'/Fixtures/scanned.pdf')),
     'file' => fn (): PendingConversion => Anydoc::file(__DIR__.'/Fixtures/scanned.pdf'),
 ]);
 
 it('converts locally when OCR is not needed', function (PendingConversion $conversion): void {
-    expect($conversion->markdown(ocr: true))
-        ->toContain('| name | role |');
+    expect($conversion->markdown(ocr: true))->toContain('| name | role |');
 })->with([
     'bytes' => fn (): PendingConversion => Anydoc::bytes("name,role\nAda,Engineer\n", Format::Csv),
     'file' => fn (): PendingConversion => Anydoc::file(__DIR__.'/Fixtures/people.csv'),
 ]);
 
-it('converts scanned PDFs with hosted OCR', function (PendingConversion $conversion, string $filename): void {
+it('converts scanned PDFs with hosted OCR', function (
+    PendingConversion $conversion,
+    string $filename,
+): void {
     Config::set([
         'anydoc.ocr.api_key' => 'test-key',
         'anydoc.ocr.api_url' => 'https://parse.example.test/',
@@ -85,18 +128,31 @@ it('converts scanned PDFs with hosted OCR', function (PendingConversion $convers
         $request->method() === 'POST'
         && $request->url() === 'https://parse.example.test/v2/parse'
         && $request->hasHeader('Authorization', 'Bearer test-key')
-        && $request->hasFile('file', file_get_contents(__DIR__.'/Fixtures/scanned.pdf'), $filename));
+        && $request->hasFile(
+            'file',
+            file_get_contents(__DIR__.'/Fixtures/scanned.pdf'),
+            $filename,
+        ));
     Http::assertSentCount(1);
 })->with([
-    'bytes' => [fn (): PendingConversion => Anydoc::bytes(file_get_contents(__DIR__.'/Fixtures/scanned.pdf')), 'document.pdf'],
+    'bytes' => [
+        fn (): PendingConversion
+            => Anydoc::bytes(file_get_contents(__DIR__.'/Fixtures/scanned.pdf')),
+        'document.pdf',
+    ],
     'disk' => [function (): PendingConversion {
         Storage::fake('documents');
-        Storage::disk('documents')->put('scans/disk.pdf', file_get_contents(__DIR__.'/Fixtures/scanned.pdf'));
+        Storage::disk('documents')
+            ->put('scans/disk.pdf', file_get_contents(__DIR__.'/Fixtures/scanned.pdf'));
 
         return Anydoc::disk('documents')->file('scans/disk.pdf');
     }, 'disk.pdf'],
-    'file' => [fn (): PendingConversion => Anydoc::file(__DIR__.'/Fixtures/scanned.pdf'), 'scanned.pdf'],
+    'file' => [
+        fn (): PendingConversion => Anydoc::file(__DIR__.'/Fixtures/scanned.pdf'),
+        'scanned.pdf',
+    ],
     'upload' => [fn (): PendingConversion => Anydoc::file(
-        UploadedFile::fake()->createWithContent('upload.pdf', file_get_contents(__DIR__.'/Fixtures/scanned.pdf')),
+        UploadedFile::fake()
+            ->createWithContent('upload.pdf', file_get_contents(__DIR__.'/Fixtures/scanned.pdf')),
     ), 'upload.pdf'],
 ]);

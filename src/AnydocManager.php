@@ -9,24 +9,27 @@ use HosmelQ\Anydoc\Laravel\Enums\Format;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\UploadedFile;
+use Override;
 
 final readonly class AnydocManager implements Anydoc
 {
     public function __construct(
         private Factory $filesystems,
-    ) {
-    }
+    ) {}
 
+    #[Override]
     public function bytes(string $bytes, null|Format $format = null): PendingBytesConversion
     {
         return new PendingBytesConversion($bytes, $format);
     }
 
+    #[Override]
     public function disk(null|string $name = null): FilesystemPendingDisk
     {
         return new FilesystemPendingDisk($this, $this->filesystems->disk($name));
     }
 
+    #[Override]
     public function file(string|UploadedFile $file): PendingConversion
     {
         if (is_string($file)) {
@@ -45,6 +48,7 @@ final readonly class AnydocManager implements Anydoc
         return new PendingBytesConversion($bytes, $format, $file->getClientOriginalName());
     }
 
+    #[Override]
     public function formatFromBytes(string $bytes): null|Format
     {
         $format = anydoc_format_from_bytes($bytes);
@@ -52,6 +56,7 @@ final readonly class AnydocManager implements Anydoc
         return $format === null ? null : Format::from($format);
     }
 
+    #[Override]
     public function formatFromExtension(string $extension): null|Format
     {
         $format = anydoc_format_from_extension($extension);
@@ -59,6 +64,7 @@ final readonly class AnydocManager implements Anydoc
         return $format === null ? null : Format::from($format);
     }
 
+    #[Override]
     public function formatFromPath(string $path): null|Format
     {
         $format = anydoc_format_from_path($path);

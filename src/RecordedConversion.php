@@ -18,6 +18,5 @@ final readonly class RecordedConversion
         public ConversionOutput $output,
         public ConversionSource $source,
         public bool $ocr = false,
-    ) {
-    }
+    ) {}
 }

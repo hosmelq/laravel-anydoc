@@ -6,8 +6,8 @@ model when available.
 
 ## Requirements
 
-- ext-anydoc ^0.2.4
-- Laravel 12+
+- ext-anydoc 1.0+
+- Laravel 13+
 - PHP 8.4+
 
 ## Installation
@@ -16,8 +16,10 @@ Install the native [extension](https://github.com/hosmelq/ext-anydoc) with
 [PIE](https://php.github.io/pie/):
 
 ```bash
-pie install hosmelq/ext-anydoc:^0.2.4
+pie install hosmelq/ext-anydoc:^1.0
 ```
+
+PHP 8.6 needs PIE 1.5 or newer.
 
 Install Laravel anydoc with Composer:
 

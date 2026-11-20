@@ -7,15 +7,16 @@ namespace HosmelQ\Anydoc\Laravel;
 use HosmelQ\Anydoc\Laravel\Contracts\Anydoc;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Override;
 
 final readonly class FilesystemPendingDisk extends PendingDisk
 {
     public function __construct(
         private Anydoc $anydoc,
         private Filesystem $filesystem,
-    ) {
-    }
+    ) {}
 
+    #[Override]
     public function file(string $path): PendingBytesConversion
     {
         $bytes = $this->filesystem->get($path);
